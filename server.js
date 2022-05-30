@@ -1,5 +1,5 @@
 // server.js
-
+//all the mudles for the applications!
 // set up ======================================================================
 // get all the tools we need
 const express  = require('express');
@@ -18,7 +18,8 @@ const session      = require('express-session');
 const configDB = require('./config/database.js');
 
 // var db
-
+//pass it in through the routes on line 28 require
+//connects to the routes
 // configuration ===============================================================
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
