@@ -1,3 +1,11 @@
+const nodeGeocoder = require('node-geocoder');
+
+let options = {
+  provider: 'openstreetmap'
+};
+ 
+const geoCoder = nodeGeocoder(options);
+const isPointNear = require('./utils.js').isPointNear;
 module.exports = function(app, passport, db) {
 
 // normal routes ===============================================================
@@ -9,11 +17,12 @@ module.exports = function(app, passport, db) {
 
     // PROFILE SECTION =========================
     app.get('/profile', isLoggedIn, function(req, res) {
-        db.collection('messages').find().toArray((err, result) => {
+        db.collection('locations').find().toArray((err, result) => {
           if (err) return console.log(err)
           res.render('profile.ejs', {
             user : req.user,
-            messages: result
+            locations: result,
+            API_KEY : 'AIzaSyBudwyHSJlQgUS9RO8APtu33o_fF-VafT8'
           })
         })
     });
@@ -26,17 +35,52 @@ module.exports = function(app, passport, db) {
 
 // message board routes ===============================================================
 
-    app.post('/messages', (req, res) => {
-      db.collection('messages').insertOne({name: req.body.name, address:req.body.address, zip: req.body.zip, country:req.body.country, msg: req.body.msg, thumbUp: 0, thumbDown:0}, (err, result) => {
-        if (err) return console.log(err)
-        console.log('saved to database')
-        res.redirect('/profile')
+    app.post('/locations', (req, res) => {
+      geoCoder.geocode(req.body.address)
+      .then((geoCodeRes)=> {
+        console.log(geoCodeRes);
+        let firstResult = geoCodeRes[0];
+        db.collection('locations').insertOne({name: req.body.name, address:req.body.address, details: req.body.details, thumbUp: 0, thumbDown:0, lat: firstResult.latitude, lng: firstResult.longitude}, (err, result) => {
+          if (err) return console.log(err)
+          console.log('saved to database')
+          res.redirect('/profile')
+        })
       })
-    })
+      .catch((err)=> {
+        return console.log(err);
+      });
+    });
 
-    app.put('/messages', (req, res) => {
-      db.collection('messages')
-      .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
+    app.get('/locations',(req,res) => {
+      const centerLat = req.query.lat;
+      const centerLng = req.query.lng;
+      const distance = req.query.distance;
+      let response = [];
+      db.collection('locations').find().toArray((err, result) => {
+        if (err) return console.log(err);
+        for (let i = 0; i < result.length; i++){
+          const location = result[i];
+          if (isPointNear(location.lat, location.lng, centerLat, centerLng, distance)){
+            response.push({
+              name: location.name,
+              address: location.address,
+              details: location.details,
+              thumbUp: location.thumbUp,
+              thumbDown: location.thumbDown,
+              lat: location.lat,
+              lng: location.lng
+            }); 
+          }
+        }
+        res.send( {
+          locations: response
+        });
+      });
+    });
+
+    app.put('/locations', (req, res) => {
+      db.collection('locations')
+      .findOneAndUpdate({name: req.body.name, details: req.body.details}, {
         $set: {
           thumbUp:req.body.thumbUp + 1
         }
@@ -47,10 +91,10 @@ module.exports = function(app, passport, db) {
         if (err) return res.send(err)
         res.send(result)
       })
-    })
-    app.put('/messagesDown', (req, res) => {
-      db.collection('messages')
-      .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
+    });
+    app.put('/locationsDown', (req, res) => {
+      db.collection('locations')
+      .findOneAndUpdate({name: req.body.name, details: req.body.details}, {
         $set: {
           thumbUp:req.body.thumbUp - 1
         }
@@ -61,14 +105,14 @@ module.exports = function(app, passport, db) {
         if (err) return res.send(err)
         res.send(result)
       })
-    })
+    });
 
-    app.delete('/messages', (req, res) => {
-      db.collection('messages').findOneAndDelete({name: req.body.name, msg: req.body.msg}, (err, result) => {
+    app.delete('/locations', (req, res) => {
+      db.collection('locations').findOneAndDelete({name: req.body.name, details: req.body.details}, (err, result) => {
         if (err) return res.send(500, err)
         res.send('Message deleted!')
       })
-    })
+    });
 
 // =============================================================================
 // AUTHENTICATE (FIRST LOGIN) ==================================================

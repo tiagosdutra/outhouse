@@ -6,19 +6,15 @@ Array.from(thumbUp).forEach(function(element) {
       element.addEventListener('click', function(){
         const name = this.parentNode.parentNode.childNodes[1].innerText
         const address = this.parentNode.parentNode.childNodes[3].innerText
-        const zip = this.parentNode.parentNode.childNodes[5].innerText
-        const country = this.parentNode.parentNode.childNodes[7].innerText
-        const msg = this.parentNode.parentNode.childNodes[9].innerText
-        const thumbUp = parseFloat(this.parentNode.parentNode.childNodes[11].innerText)
-        fetch('messages', {
+        const details = this.parentNode.parentNode.childNodes[5].innerText
+        const thumbUp = parseFloat(this.parentNode.parentNode.childNodes[7].innerText)
+        fetch('locations', {
           method: 'put',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
             'name': name,
             'address': address,
-            'zip': zip,
-            'country': country,
-            'msg': msg,
+            'details': details,
             'thumbUp':thumbUp
           })
         })
@@ -35,19 +31,15 @@ Array.from(thumbDown).forEach(function(element) {
       element.addEventListener('click', function(){
         const name = this.parentNode.parentNode.childNodes[1].innerText
         const address = this.parentNode.parentNode.childNodes[3].innerText
-        const zip = this.parentNode.parentNode.childNodes[5].innerText
-        const country = this.parentNode.parentNode.childNodes[7].innerText
-        const msg = this.parentNode.parentNode.childNodes[9].innerText
-        const thumbUp = parseFloat(this.parentNode.parentNode.childNodes[11].innerText)
-        fetch('messagesDown', {
+        const details = this.parentNode.parentNode.childNodes[5].innerText
+        const thumbUp = parseFloat(this.parentNode.parentNode.childNodes[7].innerText)
+        fetch('locationsDown', {
           method: 'put',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
             'name': name,
             'address': address,
-            'zip': zip,
-            'country': country,
-            'msg': msg,
+            'details': details,
             'thumbUp':thumbUp
           })
         })
@@ -65,11 +57,9 @@ Array.from(trash).forEach(function(element) {
       element.addEventListener('click', function(){
         const name = this.parentNode.parentNode.childNodes[1].innerText
         const address = this.parentNode.parentNode.childNodes[3].innerText
-        const zip = this.parentNode.parentNode.childNodes[5].innerText
-        const country = this.parentNode.parentNode.childNodes[7].innerText
-        const msg = this.parentNode.parentNode.childNodes[9].innerText
-        const thumbUp = parseFloat(this.parentNode.parentNode.childNodes[11].innerText)
-        fetch('messages', {
+        const details = this.parentNode.parentNode.childNodes[5].innerText
+        const thumbUp = parseFloat(this.parentNode.parentNode.childNodes[7].innerText)
+        fetch('locations', {
           method: 'delete',
           headers: {
             'Content-Type': 'application/json'
@@ -77,9 +67,7 @@ Array.from(trash).forEach(function(element) {
           body: JSON.stringify({
             'name': name,
             'address': address,
-            'zip': zip,
-            'country': country,
-            'msg': msg,
+            'details': details,
             'thumbUp':thumbUp
           })
         }).then(function (response) {

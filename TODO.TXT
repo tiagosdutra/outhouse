@@ -1,0 +1,14 @@
+
+database mgmt
+only show user's their own locations
+*change delete/tup/tdown to use id
+
+
+page mgmt
+one page where you view the map
+one page where you view outhouse mgmt
+when user sign in, they should view the map and have a link to manage outhouses
+
+polish
+styling
+put interactable thumbs up in the map pin windows.

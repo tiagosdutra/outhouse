@@ -4,7 +4,7 @@
 // get all the tools we need
 const express  = require('express');
 const app      = express();
-const port     = process.env.PORT || 8080;
+const port     = process.env.PORT || 9090;
 const MongoClient = require('mongodb').MongoClient
 const mongoose = require('mongoose');
 const passport = require('passport');
@@ -16,6 +16,7 @@ const bodyParser   = require('body-parser');
 const session      = require('express-session');
 
 const configDB = require('./config/database.js');
+
 
 // var db
 //pass it in through the routes on line 28 require
