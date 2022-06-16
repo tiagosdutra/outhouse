@@ -4,12 +4,12 @@
 // get all the tools we need
 const express  = require('express');
 const app      = express();
-const port     = process.env.PORT || 9090;
+const port     = process.env.PORT || 6969;
 const MongoClient = require('mongodb').MongoClient
 const mongoose = require('mongoose');
 const passport = require('passport');
+const ObjectId = require('mongodb').ObjectId
 const flash    = require('connect-flash');
-
 const morgan       = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser   = require('body-parser');
@@ -27,7 +27,7 @@ mongoose.set('useUnifiedTopology', true);
 mongoose.connect(configDB.url, (err, database) => {
   if (err) return console.log(err)
   db = database
-  require('./app/routes.js')(app, passport, db);
+  require('./app/routes.js')(app, passport, db, ObjectId);
 }); // connect to our database
 
 require('./config/passport')(passport); // pass passport for configuration
