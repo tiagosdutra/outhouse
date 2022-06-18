@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+    <title>Outhouse</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <div class="container">
+
+    <div class="page-header text-center">
+        <a href="/profile">Profile</a>
+        <a href="/feed">Feed</a>
+        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+    </div>
+
+    <div id="map">
+      <div>
+        <h3> My Google Map</h3>
+        <script>
+          function initMap() {
+            const lat = <%=locations[0].lat %>;
+            const lng = <%=locations[0].lng %>;
+            console.log(lat, lng)
+            const myLatLng = { lat:lat, lng:lng};
+            const map = new google.maps.Map(document.getElementById("map"), {
+              zoom: 15,
+              mapId: 'e952a99f67dafb3e',
+              center: myLatLng,
+            });
+            new google.maps.Marker({
+              position: myLatLng,
+              map:map,
+              title: "Hello World!",
+            });
+          }
+          window.initMap = initMap;
+        </script>
+      </div>
+    </div>
+     
+    <div class="row">
+      <div class="col-sm-6">
+        <h3>Posts</h3>
+        <ul class="locations">
+        <% for(let i=0; i<locations.length; i++) {%>
+          <li class="location">
+            <a href="/post/<%= locations[i]._id %>"><span><%= locations[i].name %></span></a>
+            <span><%= locations[i].address %></span>
+            <span><%= locations[i].details %></span>
+        <% } %>
+        </ul>
+      </div>
+    </div>
+
+    <h2>Add an Outhouse</h2>
+        <% if (user.local.email) { %>
+          <form action="/locations" method="POST">
+            <input type="text" placeholder="<%= locations[i].name %>" name="name">
+            <input type="text" placeholder="<%= locations[i].address %>" name="address">
+            <input type="text" placeholder="<%= locations[i].details %>" name="details">
+            <button type="submit">Submit</button>
+          </form>
+      </div>
+      <% } %>
+  </div>
+
+  <script src="main.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=<%= API_KEY %>&callback=initMap&v=weekly"
+      defer></script>
+
+</body>
+</html>

@@ -12,6 +12,35 @@ module.exports = function(app, passport, db, ObjectId) {
 
 // normal routes ===============================================================
 
+    //for the map function
+    app.get('/locations',(req,res) => {
+      const centerLat = req.query.lat;
+      const centerLng = req.query.lng;
+      const distance = req.query.distance;
+      let response = [];
+      db.collection('locations').find().toArray((err, result) => {
+        if (err) return console.log(err);
+        for (let i = 0; i < result.length; i++){
+          const location = result[i];
+          if (isPointNear(location.lat, location.lng, centerLat, centerLng, distance)){
+            response.push({
+              name: location.name,
+              address: location.address,
+              details: location.details,
+              thumbUp: location.thumbUp,
+              thumbDown: location.thumbDown,
+              lat: location.lat,
+              lng: location.lng,
+              id: location._id,
+            }); 
+          }
+        }
+        res.send( {
+          locations: response
+        });
+      });
+    });
+
     // show the home page (will also have our login links)
     app.get('/', function(req, res) {
       db.collection('locations').find().toArray((err, result) => {
@@ -48,7 +77,6 @@ module.exports = function(app, passport, db, ObjectId) {
   // });
   
   app.get('/feed', function(req, res) {
-  
     db.collection('locations').find().sort({'_id':-1}).toArray((err, result) => {
       if (err) return console.log(err)
       res.render('feed.ejs', {
@@ -58,12 +86,24 @@ module.exports = function(app, passport, db, ObjectId) {
     })
 });
 
-  app.get('/post/:id', function(req, res) {
+  app.get('/page/:id', function(req, res) {
     const postId = ObjectId(req.params.id)
     db.collection('locations').find({_id: postId}).toArray((err, result) => {
       if (err) return console.log(err)
       console.log(result)
-      res.render('post.ejs', {
+      res.render('page.ejs', {
+        locations: result,
+        API_KEY : 'AIzaSyBudwyHSJlQgUS9RO8APtu33o_fF-VafT8'
+      })
+    })
+  });
+
+  app.get('/edit/:id', function(req, res) {
+    const postId = ObjectId(req.params.id)
+    db.collection('locations').find({_id: postId}).toArray((err, result) => {
+      if (err) return console.log(err)
+      console.log(result)
+      res.render('page.ejs', {
         locations: result,
         API_KEY : 'AIzaSyBudwyHSJlQgUS9RO8APtu33o_fF-VafT8'
       })
@@ -83,7 +123,17 @@ module.exports = function(app, passport, db, ObjectId) {
         console.log(geoCodeRes);
         let firstResult = geoCodeRes[0];
         let user = req.user._id
-        db.collection('locations').insertOne({postedBy: user, name: req.body.name, address:req.body.address, details: req.body.details, thumbUp: 0, thumbDown:0, lat: firstResult.latitude, lng: firstResult.longitude, }, (err, result) => {
+        db.collection('locations').insertOne({
+          postedBy: user, 
+          name: req.body.name, 
+          address:req.body.address, 
+          details: req.body.details, 
+          thumbUp: 0, 
+          thumbDown:0, 
+          lat: firstResult.latitude, 
+          lng: firstResult.longitude,
+          comments: [],
+        }, (err, result) => {
           if (err) return console.log(err)
           console.log('saved to database')
           res.redirect('/profile')
@@ -94,40 +144,10 @@ module.exports = function(app, passport, db, ObjectId) {
       });
     });
 
-    app.post('/comments'),(req, res =>{
-      const user = req.user._id
-      db.collection('comments').insertOne({postedBy:user,comment:req.body.comment,})
-    })
 
-    app.get('/locations',(req,res) => {
-      const centerLat = req.query.lat;
-      const centerLng = req.query.lng;
-      const distance = req.query.distance;
-      let response = [];
-      db.collection('locations').find().toArray((err, result) => {
-        if (err) return console.log(err);
-        for (let i = 0; i < result.length; i++){
-          const location = result[i];
-          if (isPointNear(location.lat, location.lng, centerLat, centerLng, distance)){
-            response.push({
-              name: location.name,
-              address: location.address,
-              details: location.details,
-              thumbUp: location.thumbUp,
-              thumbDown: location.thumbDown,
-              lat: location.lat,
-              lng: location.lng,
-              id: location._id,
-            }); 
-          }
-        }
-        res.send( {
-          locations: response
-        });
-      });
-    });
+   
 
-    app.put('/locations', (req, res) => {
+    app.post('/locations', (req, res) => {
       db.collection('locations')
       .findOneAndUpdate({name: req.body.name, details: req.body.details}, {
         $set: {
@@ -146,6 +166,23 @@ module.exports = function(app, passport, db, ObjectId) {
       .findOneAndUpdate({name: req.body.name, details: req.body.details}, {
         $set: {
           thumbUp:req.body.thumbUp - 1
+        }
+      }, {
+        sort: {_id: -1},
+        upsert: true
+      }, (err, result) => {
+        if (err) return res.send(err)
+        res.send(result)
+      })
+    });
+
+    app.post('/comments', (req, res) => {
+      db.collection('locations')
+      .findOneAndUpdate(
+        {name: req.body.name, 
+          details: req.body.details}, {
+        $addToSet: {
+          comments: [req.user.local.email, req.body.comments]
         }
       }, {
         sort: {_id: -1},
