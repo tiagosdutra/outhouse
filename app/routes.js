@@ -1,11 +1,10 @@
 const { result } = require('lodash');
 const nodeGeocoder = require('node-geocoder');
 const user = require('./models/user.js');
-
 let options = {
   provider: 'openstreetmap'
 };
- 
+const API_KEY = require('../config/apikey.js').key;
 const geoCoder = nodeGeocoder(options);
 const isPointNear = require('./utils.js').isPointNear;
 module.exports = function(app, passport, db, ObjectId) {
@@ -47,7 +46,7 @@ module.exports = function(app, passport, db, ObjectId) {
         if (err) return console.log(err)
         res.render('index.ejs',{
           locations: result,
-          API_KEY : 'AIzaSyBudwyHSJlQgUS9RO8APtu33o_fF-VafT8',
+          API_KEY : API_KEY,
         });
       })
         
@@ -61,51 +60,48 @@ module.exports = function(app, passport, db, ObjectId) {
           res.render('profile.ejs', {
             user : req.user,
             locations: result,
-            API_KEY : 'AIzaSyBudwyHSJlQgUS9RO8APtu33o_fF-VafT8'
+            API_KEY : API_KEY
           })
         })
     });
-  //   app.get('/post/:zebra', isLoggedIn, function(req, res) {
-  //     let postId = ObjectId(req.params.zebra)
-  //     console.log(postId)
-  //     db.collection('posts').find({_id: postId}).toArray((err, result) => {
-  //       if (err) return console.log(err)
-  //       res.render('post.ejs', {
-  //         posts: result
-  //       })
-  //     })
-  // });
   
   app.get('/feed', function(req, res) {
     db.collection('locations').find().sort({'_id':-1}).toArray((err, result) => {
       if (err) return console.log(err)
       res.render('feed.ejs', {
         locations: result,
-        API_KEY : 'AIzaSyBudwyHSJlQgUS9RO8APtu33o_fF-VafT8'
+        API_KEY : API_KEY
       })
     })
 });
 
-  app.get('/page/:id', function(req, res) {
-    const postId = ObjectId(req.params.id)
-    db.collection('locations').find({_id: postId}).toArray((err, result) => {
-      if (err) return console.log(err)
-      console.log(result)
-      res.render('page.ejs', {
-        locations: result,
-        API_KEY : 'AIzaSyBudwyHSJlQgUS9RO8APtu33o_fF-VafT8'
-      })
-    })
+  app.get('/page/:id', function (req, res) {
+    const locationId = ObjectId(req.params.id);
+    db.collection('locations').find({ _id: locationId }).toArray((err, locations) => {
+      if (err) return console.log(err);
+      db.collection('comments').find({ locationID: locationId }).toArray((err, comments) => {
+        if (err) return console.log(err);
+        res.render('page.ejs', {
+          locations: locations,
+          comments: comments,
+          API_KEY: API_KEY
+        });
+      });
+    });
   });
+ 
 
-  app.get('/edit/:id', function(req, res) {
+
+
+
+  app.get('/edit/:id', isLoggedIn, function(req, res) {
     const postId = ObjectId(req.params.id)
     db.collection('locations').find({_id: postId}).toArray((err, result) => {
       if (err) return console.log(err)
-      console.log(result)
-      res.render('page.ejs', {
+      res.render('edit.ejs', {
+        user : req.user,
         locations: result,
-        API_KEY : 'AIzaSyBudwyHSJlQgUS9RO8APtu33o_fF-VafT8'
+        API_KEY : API_KEY
       })
     })
   });
@@ -161,6 +157,20 @@ module.exports = function(app, passport, db, ObjectId) {
         res.send(result)
       })
     });
+    app.post('/edit/:id', isLoggedIn, (req, res) => {
+      const postId = ObjectId(req.params.id)
+      db.collection('locations')
+      .findOneAndUpdate({_id: postId}, {
+        $set: {
+          name: req.body.name,
+          address: req.body.address,
+          details: req.body.details
+        }
+      }, (err, result) => {
+        if (err) return res.send(err);
+        res.redirect(`/page/${postId}`);
+      })
+    });
     app.put('/locationsDown', (req, res) => {
       db.collection('locations')
       .findOneAndUpdate({name: req.body.name, details: req.body.details}, {
@@ -171,32 +181,28 @@ module.exports = function(app, passport, db, ObjectId) {
         sort: {_id: -1},
         upsert: true
       }, (err, result) => {
-        if (err) return res.send(err)
-        res.send(result)
+        if (err) return res.send(err);
+        res.send(result);
       })
     });
 
-    app.post('/comments', (req, res) => {
-      db.collection('locations')
-      .findOneAndUpdate(
-        {name: req.body.name, 
-          details: req.body.details}, {
-        $addToSet: {
-          comments: [req.user.local.email, req.body.comments]
-        }
-      }, {
-        sort: {_id: -1},
-        upsert: true
+    app.post('/page/:id/comments', isLoggedIn, (req, res) => {
+      let postId = ObjectId(req.params.id);
+      db.collection("comments").insertOne({
+        postedBy: req.user._id, 
+        locationID: postId,
+        comment: req.body.comment,
       }, (err, result) => {
-        if (err) return res.send(err)
-        res.send(result)
+        if (err) return console.log(err);
+        console.log('saved to database');
+        res.redirect(`/page/${req.params.id}`);
       })
-    });
+    })
 
     app.delete('/locations', (req, res) => {
       db.collection('locations').findOneAndDelete({name: req.body.name, details: req.body.details}, (err, result) => {
-        if (err) return res.send(500, err)
-        res.send('Message deleted!')
+        if (err) return res.send(500, err);
+        res.send('Message deleted!');
       })
     });
 
@@ -257,3 +263,21 @@ function isLoggedIn(req, res, next) {
 
     res.redirect('/');
 }
+
+
+// app.post('/comments', (req, res) => {
+//   let user = req.user._id
+//   let postedOn = req.ObjectId
+//   db.collection('comments').insertOne({
+//     postedBy: user, 
+//     postedOn:
+//     comment:req.body.comment,
+//   }, (err, result) => {
+//     if (err) return console.log(err)
+//     console.log('saved to database')
+//     res.redirect('/profile')
+//   })
+// })
+// .catch((err)=> {
+//   return console.log(err);
+// });

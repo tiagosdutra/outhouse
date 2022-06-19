@@ -76,30 +76,3 @@ Array.from(trash).forEach(function(element) {
         })
       });
 });
-
-
-Array.from(addComment).forEach(function (element) {
-  element.addEventListener("click", function () {
-    let postId = this.parentNode.querySelector('.objectId').value
-    console.log(postId);
-    let comments = this.parentNode.querySelector('.commentbox').value
-    console.log(comments)
-    fetch("comments", {
-      method: "put",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-
-        postId: postId,
-        comments: comments
-
-      }),
-    })
-      .then((response) => {
-        if (response.ok) return response.json();
-      })
-      .then((data) => {
-        console.log(data);
-        // window.location.reload(true);
-      });
-  });
-});

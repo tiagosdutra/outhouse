@@ -14,7 +14,7 @@
         <a href="/feed">Feed</a>
         <a href="/logout" class="btn btn-default btn-sm">Logout</a>
     </div>
-
+    <h1> Edit <%= locations[0].name %></h1>
     <div id="map">
       <div>
         <h3> My Google Map</h3>
@@ -56,17 +56,17 @@
 
     <h2>Add an Outhouse</h2>
         <% if (user.local.email) { %>
-          <form action="/locations" method="POST">
-            <input type="text" placeholder="<%= locations[i].name %>" name="name">
-            <input type="text" placeholder="<%= locations[i].address %>" name="address">
-            <input type="text" placeholder="<%= locations[i].details %>" name="details">
+          <form action="/edit/<%= locations[0]._id %>" method="POST">
+            <input type="text" value="<%= locations[0].name %>" name="name">
+            <input type="text" value="<%= locations[0].address %>" name="address">
+            <input type="text" value="<%= locations[0].details %>" name="details">
             <button type="submit">Submit</button>
           </form>
       </div>
       <% } %>
   </div>
 
-  <script src="main.js"></script>
+  <script src="/main.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=<%= API_KEY %>&callback=initMap&v=weekly"
       defer></script>
 

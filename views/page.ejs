@@ -14,7 +14,7 @@
         <a href="/feed">Feed</a>
         <a href="/logout" class="btn btn-default btn-sm">Logout</a>
     </div>
-
+    <h1><%= locations[0].name %></h1>
     <div id="map">
       <div>
         <h3> My Google Map</h3>
@@ -52,23 +52,31 @@
             <span><%= locations[i].thumbUp %></span>
             <span><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
             <span><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-            <form actions="/comments" method="POST">
-              <input value="<%= locations[i]._id %>" class="objectId" hidden>
-              <input type="text" name="comments" aria-disabled="true" placeholder="Comments, Questions, Concerns" class="commentBox">
-              <button class="addComment "type="submit">POST</button>
-            </form>
-            <% for (let j=0; j<locations[i].comments.length; j++) {%>
-                <span><%=locations[i].comments[j] %></span>
-            <% } %>
-          </li>
         <% } %>
+        </ul>
+        <div>
+          <h4>Leave A Note</h4>
+          <form action="/page/<%= locations[0]._id%>/comments" method="post">
+            <textarea id="comments" name="comment" rows="4" cols="50"></textarea>
+            <button type="submit">submit</button>
+          </form>
+        </div>
+  
+        <ul class="messages">
+          <% for(let i=0; i<comments.length; i++) {%>
+            <li class="message">
+              <h4>
+                <%= comments[i].comment %>
+              </h4>
+            </li>
+            <% } %>
         </ul>
         
       </div>
     </div>
   </div>
 
-  <script src="main.js"></script>
+  <script src="/main.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=<%= API_KEY %>&callback=initMap&v=weekly"
       defer></script>
 
