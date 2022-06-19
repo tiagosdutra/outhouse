@@ -6,6 +6,8 @@ lib-cov
 *.out
 *.pid
 *.gz
+config/apikey.js
+config/database.js
 
 pids
 logs

@@ -8,13 +8,15 @@ one page where you view outhouse mgmt
 
 polish
 styling
-put interactable thumbs up in the map pin windows.
 
-switch api key to a new api key, do exactly as you did for util.js
+switch api key to a new api key
 
 issues
-feed page cant be accessed unless your logged in
-what could i do instead:
-havea a review page for each outhouse
-when youre on the map you could have link to the outhouse, 
-timestamp to include most recent added to database
+
+favicon
+
+demo prep
+have an outline for what to demo
+prep data 
+code to show off
+create an outhouse live
