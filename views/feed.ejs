@@ -1,32 +1,58 @@
 <!doctype html>
 <html>
 <head>
-    <title>21 Savage Fan Site</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <title>Outhouse</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="container">
-
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">Outhouse</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbar">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 text-end">
+          <li class="nav-item">
+            <a href="/login" class="nav-link">Login</a>
+        </li>
+        <li class="nav-item">
+            <a href="/Signup " class="nav-link">Signup</a>
+        </li>
+        <li class="nav-item">
+          <a href="/profile" class="nav-link">Your Outhouses</a>
+      </li>
+        <li class="nav-item">
+            <a href="/feed" class="nav-link">All Outhouses</a>
+        </li>
+        <li class="nav-item">
+            <a href="/logout" class="nav-link">Logout</a>
+        </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
   <div class="page-header text-center">
-      <h1>Feed</h1>
-      <a href="/profile">Profile</a>
-      <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+      <h1>All Outhouses</h1>
   </div>
   <div class="row">
-     
       <div class="col-sm-6">
         <h3>Posts</h3>
-        <ul class="locations">
+        <ul class="locations list-group list-group-horizontal gap-3  my-3">
         <% for(var i=0; i<locations.length; i++) {%>
-          <li class="location">
-            <a href="/page/<%= locations[i]._id %>"><span><%= locations[i].name %></span></a>
-            <span><%= locations[i].address %></span>
-            <span><%= locations[i].details %></span>
-            <span><%= locations[i].thumbUp %></span>
-            <span><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-            <span><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+          <li class="location list-group shadow-lg">
+            <div class="card" style="width: 18rem; height:18rem;">
+              <div class="card-body">
+              <a href="/page/<%= locations[i]._id %>"><h3 class="card-title"><%= locations[i].name %></h3></a>
+              <p class="card-text"><%= locations[i].address %></p>
+              <p class="card-text"><%= locations[i].details %></p>
+              <span class="card-text"><%= locations[i].thumbUp %></span>
+              <span><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+              </div>
+            </div>
           </li>
         <% } %>
         </ul>
@@ -110,6 +136,7 @@
     
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <script src="main.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=<%= API_KEY %>&callback=getUserLocation&v=weekly"
       defer></script>

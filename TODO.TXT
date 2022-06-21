@@ -20,3 +20,11 @@ have an outline for what to demo
 prep data 
 code to show off
 create an outhouse live
+
+HEADER
+STYLES
+
+organize to do list
+STRETCH GOAL
+MAIN SCREEN A CAROUSEL UNDER MAP WHICH HAS THE LOCATION INFO, CLICK THROUGH CAROUSEL FOR INFO
+MEGA STRETCH GOAL Make it so people can upload photos
