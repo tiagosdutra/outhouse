@@ -1,5 +1,6 @@
 body{
   word-wrap:break-word;
+  background-color: #1b9999;
 }
 img{
   height: 200px;
@@ -12,3 +13,29 @@ img{
   height:500px;
 }
 
+.card{
+  /* background-color: #f6bbb7; */
+  background-color: #f1d8d6;
+}
+
+.btn{
+  background-color: #e5645e;
+}
+
+.display-2{
+  color: #f1d8d6;
+}
+
+a{
+  text-decoration: none;
+  color: black;
+}
+a:hover{
+  color: #1b9999;
+
+  cursor:pointer;
+}
+
+.mgtop{
+  margin-top: 11vh;
+}

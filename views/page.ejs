@@ -11,7 +11,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
-        <a class="navbar-brand" href="/">Outhouse</a>
+        <a class="navbar-brand link-dark" href="/">Outhouse</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -36,10 +36,10 @@
         </div>
       </div>
     </nav>
-    <h1><%= locations[0].name %></h1>
-    <div id="map">
+    <h1 class="display-2"><%= locations[0].name %></h1>
+    <div id="map" class="mb-3">
       <div>
-        <h3> My Google Map</h3>
+        <h3 class="display-2"> My Google Map</h3>
         <script>
           function initMap() {
             const lat = <%=locations[0].lat %>;
@@ -47,7 +47,7 @@
             console.log(lat, lng)
             const myLatLng = { lat:lat, lng:lng};
             const map = new google.maps.Map(document.getElementById("map"), {
-              zoom: 15,
+              zoom: 17,
               mapId: 'e952a99f67dafb3e',
               center: myLatLng,
             });
@@ -64,36 +64,32 @@
      
     <div class="row">
       <div class="col-sm-6">
-        <h3>Posts</h3>
-        <ul class="locations">
+        <ul class="locations list-group-flush">
         <% for(let i=0; i<locations.length; i++) {%>
-          <li class="location">
-            <a href="/post/<%= locations[i]._id %>"><span><%= locations[i].name %></span></a>
-            <span><%= locations[i].address %></span>
-            <span><%= locations[i].details %></span>
-            <span><%= locations[i].thumbUp %></span>
-            <span><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-            <span><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+          <li class="location list-group-item">
+            <a class="link-dark" href="/post/<%= locations[i]._id %>"><p><%= locations[i].name %></p></a>
+            <p><%= locations[i].address %></p>
+            <p><%= locations[i].details %></p>
         <% } %>
         </ul>
-        <div>
+        <div class="mb-3">
           <h4>Leave A Note</h4>
           <form action="/page/<%= locations[0]._id%>/comments" method="post">
             <textarea id="comments" name="comment" rows="4" cols="50"></textarea>
-            <button type="submit">submit</button>
+            <button class="btn btn-primary"type="submit">submit</button>
           </form>
         </div>
   
-        <ul class="messages">
+        <ul class="messages list-group-flush">
           <% for(let i=0; i<comments.length; i++) {%>
-            <li class="message">
+            <li class="message list-group-item">
               <h4>
                 <%= comments[i].comment %>
               </h4>
             </li>
             <% } %>
         </ul>
-        
+
       </div>
     </div>
   </div>

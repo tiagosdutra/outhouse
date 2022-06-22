@@ -199,13 +199,20 @@ module.exports = function(app, passport, db, ObjectId) {
       })
     })
 
-    app.delete('/locations', (req, res) => {
-      db.collection('locations').findOneAndDelete({name: req.body.name, details: req.body.details}, (err, result) => {
+    app.delete('locations/:id', isLoggedIn, (req, res) => {
+      const postId = ObjectId(req.params.id)
+      db.collection('locations').findOneAndDelete({_id:postId}, (err, result) => {
         if (err) return res.send(500, err);
-        res.send('Message deleted!');
+        res.redirect('/profile');
       })
     });
 
+
+    app.post('/edit/:zebra/delete', isLoggedIn, function (req, res) {
+      let postId = ObjectId(req.params.zebra)
+      db.collection('locations').remove({ _id: postId })
+      res.redirect("/profile")
+    });
 // =============================================================================
 // AUTHENTICATE (FIRST LOGIN) ==================================================
 // =============================================================================
