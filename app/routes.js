@@ -26,8 +26,6 @@ module.exports = function(app, passport, db, ObjectId) {
               name: location.name,
               address: location.address,
               details: location.details,
-              thumbUp: location.thumbUp,
-              thumbDown: location.thumbDown,
               lat: location.lat,
               lng: location.lng,
               id: location._id,
@@ -49,8 +47,6 @@ module.exports = function(app, passport, db, ObjectId) {
           API_KEY : API_KEY,
         });
       })
-        
-
     });
 
     // PROFILE SECTION =========================
@@ -124,8 +120,6 @@ module.exports = function(app, passport, db, ObjectId) {
           name: req.body.name, 
           address:req.body.address, 
           details: req.body.details, 
-          thumbUp: 0, 
-          thumbDown:0, 
           lat: firstResult.latitude, 
           lng: firstResult.longitude,
           comments: [],
@@ -140,8 +134,27 @@ module.exports = function(app, passport, db, ObjectId) {
       });
     });
 
+    app.post('/edit/:id', isLoggedIn, (req, res) => {
+      const postId = ObjectId(req.params.id)
+      db.collection('locations')
+        .findOneAndUpdate({ _id: postId }, {
+          $set: {
+            name: req.body.name,
+            address: req.body.address,
+            details: req.body.details,
 
-   
+          }
+        }, (err, result) => {
+          if (err) return res.send(err);
+          res.redirect(`/admin`);
+        })
+    });
+
+    app.post('/edit/:zebra/delete', isLoggedIn, function (req, res) {
+      let postId = ObjectId(req.params.zebra)
+      db.collection('locations').remove({ _id: postId })
+      res.redirect("/admin")
+    });
 
     app.post('/locations', (req, res) => {
       db.collection('locations')
@@ -157,20 +170,7 @@ module.exports = function(app, passport, db, ObjectId) {
         res.send(result)
       })
     });
-    app.post('/edit/:id', isLoggedIn, (req, res) => {
-      const postId = ObjectId(req.params.id)
-      db.collection('locations')
-      .findOneAndUpdate({_id: postId}, {
-        $set: {
-          name: req.body.name,
-          address: req.body.address,
-          details: req.body.details
-        }
-      }, (err, result) => {
-        if (err) return res.send(err);
-        res.redirect(`/page/${postId}`);
-      })
-    });
+ 
     app.put('/locationsDown', (req, res) => {
       db.collection('locations')
       .findOneAndUpdate({name: req.body.name, details: req.body.details}, {
@@ -208,11 +208,7 @@ module.exports = function(app, passport, db, ObjectId) {
     });
 
 
-    app.post('/edit/:zebra/delete', isLoggedIn, function (req, res) {
-      let postId = ObjectId(req.params.zebra)
-      db.collection('locations').remove({ _id: postId })
-      res.redirect("/profile")
-    });
+   
 // =============================================================================
 // AUTHENTICATE (FIRST LOGIN) ==================================================
 // =============================================================================

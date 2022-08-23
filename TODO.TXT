@@ -28,3 +28,5 @@ organize to do list
 STRETCH GOAL
 MAIN SCREEN A CAROUSEL UNDER MAP WHICH HAS THE LOCATION INFO, CLICK THROUGH CAROUSEL FOR INFO
 MEGA STRETCH GOAL Make it so people can upload photos
+
+haversine, isoline distance walking 5 mins another 

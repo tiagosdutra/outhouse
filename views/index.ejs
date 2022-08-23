@@ -54,7 +54,7 @@
           }
           function initMap(pos) {
             const options = {
-              zoom: 17,
+              zoom: 15,
               mapId: 'e952a99f67dafb3e',
               center: { lat: pos.coords.latitude, lng: pos.coords.longitude }
             }
@@ -86,8 +86,6 @@
                   const lat = data.locations[j].lat;
                   const lng = data.locations[j].lng;
                   const details = data.locations[j].details;
-                  const thumbUp = data.locations[j].thumbUp;
-                  const thumbDown = data.locations[j].thumbDown;
                   const infowindow = new google.maps.InfoWindow();
                   const marker = new google.maps.Marker({
                     position: new google.maps.LatLng(lat, lng),
@@ -106,7 +104,8 @@
                       infowindow.setContent(
                         `<p>${name}</p>
                          <p>${address}</p> 
-                         <p>${details}</p> 
+                         <p>${details}</p>
+                          
                           <button class="btn"><a href="/page/${data.locations[j].id}"><p>Comments</p></a></button>`
                       );
                       infowindow.open(map, marker);
