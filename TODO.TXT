@@ -2,11 +2,6 @@
 database mgmt
 *change delete/tup/tdown to use id
 
-
-page mgmt
-one page where you view outhouse mgmt
-
-polish
 styling
 
 switch api key to a new api key
